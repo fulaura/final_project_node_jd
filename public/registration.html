@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+  <!-- simple registration page -->
+    <div class="nav">
+        <nav class="navbar is-black">
+            <div class="navbar-brand">
+              <p style="font-size: 1.8rem; padding-left: 12%; padding-top: 6%;"><strong>Prof!l<</strong></p>
+              <div class="navbar-burger js-burger" data-target="navbarExampleTransparentExample">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          
+            <div id="navbarExampleTransparentExample" class="navbar-menu" style="padding-left: 1%; padding-top: 0.5%;">
+              <div class="navbar-start">
+                <a class="navbar-item" href="/"> Home </a>
+              </div>
+            </div>
+          </nav>
+    </div>
+
+
+    <br>
+
+
+    <div class="container" style="width: 40%;">
+        <H1 style="font-size: 2.5rem;"><strong>Register</strong></H1>
+        
+        <br>
+        <label class="label">Username</label>
+        <div class="bl1" style="display: flex;">
+          <div class="field" style="width: 75%;">
+            <div class="control has-icons-left has-icons-right">
+              <input class="input" type="text" placeholder="username123" id="username">
+              <span class="icon is-small is-left">
+                <i class="fas fa-user"></i>
+              </span>
+              
+            </div>
+            <p class="help is-danger" id="message"></p>
+          </div>
+          <div class="connect_wllt" style="margin-left: 2%;">
+            <div class="button" id="connect-wallet-btn">
+              Connect Wallet
+            </div>
+            <!-- <p id="wallet-address"></p> -->
+          </div>
+        </div>
+            <div class="names" style="display: flex;">
+                <div class="field" style="width: 100%;">
+                    <label class="label">First Name</label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="text" placeholder="Adolf" id="first-name">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div>
+                </div>
+    
+                <div class="field" style="margin-left: 2%; width: 110%;">
+                    <label class="label">Last Name</label>
+                    <div class="control has-icons-left">
+                        <input class="input" type="text" placeholder="Hitler" id="last-name">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <label class="label">Birth Date</label>
+            <div class="field" style="display: flex;">
+                <div class="control has-icons-left">
+                    <input class="input" type="date" placeholder="Birth Date" style="width: 80%;" id="birth-date">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-calendar"></i>
+                    </span>
+                </div>
+
+                <div class="field"></div>
+                <div class="control has-icons-left" style="width: 120%; margin-left: -4%;">
+                    <input class="input" type="password" placeholder="Password" id="password">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                </div>
+            </div>
+
+
+            <br>
+            <div class="buttons">
+                <div class="button is-primary is-inverted is-outlined" onclick="register()">
+                    Register
+                </div>
+    
+                <div class="button is-info is-inverted is-outlined" onclick="window.location.href='/login'">
+                    Login
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+<script>
+  async function register() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const firstName = document.getElementById('first-name').value;
+    const lastName = document.getElementById('last-name').value;
+    const birthDate = document.getElementById('birth-date').value;
+    const walletAddress = window.walletAddress;
+
+    //get elements and securing the registration process
+    if (!username && !password || !firstName || !lastName || !birthDate || !walletAddress) {
+      document.getElementById('message').textContent = 'Please fill in all fields and connect your wallet.';
+      return;
+    } else if (password.length < 8) {
+      document.getElementById('message').textContent = 'Password must be at least 8 characters long.';
+      return;
+    } else if (username || password || firstName || lastName || birthDate || walletAddress) {
+      document.getElementById('message').textContent = '';
+    }
+
+    try {//check user if exists
+      const signInResp = await fetch(`/check_user?username=${encodeURIComponent(username)}`, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      });
+
+      if (signInResp.ok) {
+          document.getElementById('message').textContent = 'Username already exists. Please try another one.';
+          return;
+      }
+      } catch (e) {
+          document.getElementById('message').textContent = 'An error occurred. Please try again.';
+          return;
+      }
+
+    try {//if there is no such user, then registers
+      resp = await fetch('/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          firstName,
+          lastName,
+          birthDate,
+          walletAddress,
+        }),
+      });
+      
+      await new Promise(resolve => setTimeout(resolve, 1500));//timer for changing the page
+      window.location.href = '/login';
+    } catch (e) {
+      document.getElementById('message').textContent = 'An error occurred. Please try again.';
+      return;
+    }
+
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script src="./wallet.js"></script>
+</html>

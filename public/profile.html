@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Document</title>
+</head>
+<body>
+    <!-- peoples profiles(CV) -->
+    <div class="nav">
+        <nav class="navbar is-black">
+            <div class="navbar-brand">
+              <p style="font-size: 1.8rem; padding-left: 12%; padding-top: 6%;"><strong>Prof!l<</strong></p>
+              <div class="navbar-burger js-burger" data-target="navbarExampleTransparentExample">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          
+            <div id="navbarExampleTransparentExample" class="navbar-menu" style="padding-left: 1%; padding-top: 0.1%;">
+              <div class="navbar-start">
+                <a class="navbar-item" href="/"> Home </a>
+                <a class="navbar-item" onclick="window.location.href='/news_edit'"> News </a>
+                <a class="navbar-item" onclick="window.location.href=`/roles_edit`"> Roles </a>
+                <a class="navbar-item" onclick="window.location.href='/profile_edit'"> Profiles </a>
+              </div>
+            </div>
+          </nav>
+
+
+          <br><br>
+
+          <!-- <div class="container"></div> -->
+
+        <div class="container">
+          <div id="profile_list">
+            
+          </div>
+        </div>
+
+
+</body>
+<script>
+    async function fetchProfiles() {  //retrieve all profiles and display them
+        const response = await fetch('/account_profiles');
+        const data = await response.json();
+        console.log(data);
+        
+        document.getElementById('profile_list').innerHTML = data.map(profile => {
+            return `
+            <div class="box" style="width:40%;">
+                <div class="media-content">
+                    <div class="content">
+                        <p>
+                            <strong>${profile.username}</strong>
+                            <br>
+                            email: ${profile.email} <br>
+                            role: ${profile.role} <br>
+                            name: ${profile.name} <br>
+                            title: ${profile.title} <br>
+                            description: ${profile.description} <br>
+                            posted: ${profile.posted} <br>
+                            <div class="button" onclick="deletePost('${profile._id}')">Delete</div>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+    }
+
+    async function deletePost(id) {  //same as in new, delete post
+        const response = await fetch(`/account_profiles/${id}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            console.error('Failed to delete profile');
+            return;
+        }
+        fetchProfiles();
+    }
+
+    fetchProfiles();
+</script>
+</html>

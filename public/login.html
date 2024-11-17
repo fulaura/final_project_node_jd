@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Document</title>
+</head>
+<body>
+  <!-- login page -->
+    <div class="nav">
+        <nav class="navbar is-black">
+            <div class="navbar-brand">
+              <p style="font-size: 1.8rem; padding-left: 12%; padding-top: 6%;"><strong>Prof!l<</strong></p>
+              <div class="navbar-burger js-burger" data-target="navbarExampleTransparentExample">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          
+            <div id="navbarExampleTransparentExample" class="navbar-menu" style="padding-left: 1%; padding-top: 0.5%;">
+              <div class="navbar-start">
+                <a class="navbar-item" href="/"> Home </a>
+              </div>
+            </div>
+          </nav>
+    </div>
+
+    <br>
+    
+    <div class="container" style="width: 40%;">
+      <H1 style="font-size: 2.5rem;"><strong>Login</strong></H1>
+        <div class="field">
+            <br>
+            <label class="label">Username</label>
+            <div class="control has-icons-left has-icons-right">
+              <input class="input" type="text" placeholder="user123" id="username">
+              <span class="icon is-small is-left">
+                <i class="fas fa-user"></i>
+              </span>
+              <span class="icon is-small is-right">
+                <i class="fas fa-check"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="field"></div>
+            <label class="label">Password</label>
+            <div class="control has-icons-left">
+                <input class="input" type="password" placeholder="Password" id="password">
+                <span class="icon is-small is-left">
+                    <i class="fas fa-lock"></i>
+                </span>
+            </div>
+
+
+            <br>
+            <div class="buttons">
+                <div class="button is-primary is-inverted is-outlined" onclick="login()">
+                    Login
+                </div>
+    
+                <div class="button is-info is-inverted is-outlined" onclick="window.location.href='/register'">
+                    Register
+                    <p style="font-size: 0.4rem; margin-left: 2%; margin-top: 1%;">do not have<br>an account?</p>
+                </div>
+            </div>
+    </div>
+
+
+
+</body>
+<script>
+  async function login() {   //simple sign in operation
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    result = await fetch(`/check_user?username=${username}`);
+    if (result.ok) {
+      result = await fetch(`/signin?username=${username}&password=${password}`);
+      if (result.ok) {
+        localStorage.setItem('username', username);
+        window.location.href = '/walletVerify';   //redirect to walletVerify page to verify by 2FA
+      } else {
+        alert('Invalid password');
+      }
+    }
+  }
+
+</script>
+</html>

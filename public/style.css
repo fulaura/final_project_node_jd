@@ -1,0 +1,52 @@
+@import "https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css";
+
+.carousel {
+    display: flex; 
+    overflow: hidden; 
+    width: 100%; 
+    height: 100%; 
+    position: relative;
+}
+
+.carousel-item {
+    min-width: 100%; 
+    transition: transform 0.5s ease; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.carousel-item img {
+    max-width: 100%;
+    max-height: 100%; 
+    object-fit: contain;
+}
+
+.news-carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+  }
+
+  .news-item {
+    min-width: 200px;
+    flex: 0 0 auto;
+  }
+
+  .news-image {
+    position: relative;
+    width: 200px;
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .news-overlay {
+    position: absolute;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem;
+  }

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <!-- news block that are controlled by the admin and moderators -->
+    <div class="nav">
+        <nav class="navbar is-black">
+            <div class="navbar-brand">
+              <p style="font-size: 1.8rem; padding-left: 12%; padding-top: 6%;"><strong>Prof!l<</strong></p>
+              <div class="navbar-burger js-burger" data-target="navbarExampleTransparentExample">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          
+            <div id="navbarExampleTransparentExample" class="navbar-menu" style="padding-left: 1%; padding-top: 0.1%;">
+              <div class="navbar-start">
+                <a class="navbar-item" onclick="window.location.href=`/mod?username=${localStorage.getItem('username')}`"> Home </a>
+              </div>
+            </div>
+          </nav>
+    </div>
+
+
+    <br><br>
+
+
+    <div class="3rd_container">
+      <div class="box is-centered" style="margin: 0 auto; max-width: 60%;">
+        <h1 style="font-size: 1rem;">Fulaura news</h1>
+        <br>
+        <div class="news-carousel" id="news_block">
+        </div>
+      </div>
+    </div>
+
+
+    <div class="news-form" style="margin: 0 auto; max-width: 60%; padding: 1rem;">
+        <h2>Add News</h2>
+        <form id="newsForm">
+            <div class="field">
+                <label class="label">Headline</label>
+                <div class="control">
+                    <input class="input" type="text" id="headline" placeholder="Enter headline">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Link to Photo</label>
+                <div class="control">
+                    <input class="input" type="text" id="photoLink" placeholder="Enter photo URL">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Link to News</label>
+                <div class="control">
+                    <input class="input" type="text" id="newsLink" placeholder="Enter news URL">
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-link" type="submit" onclick="add_news()">Post</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <br><br><br>
+
+
+    <footer class="footer" style="font-size: 0.8rem; padding: 1rem; padding-bottom: 0.1rem;">
+      <div class="content has-text-centered">
+        <p>
+          <strong>Prof!l<</strong> by <a href="https://www.instagram.com/im_fulaura/">Bekzat Ashirbek</a> from BDA-2306.
+            <p style="font-size: 0.7rem; margin-top: -1rem;">final project</p>
+        </p>
+      </div>
+    </footer>
+    
+</body>
+<script>
+    async function add_news(){
+        const headline = document.getElementById('headline').value;
+        const photoLink = document.getElementById('photoLink').value;
+        const newsLink = document.getElementById('newsLink').value;
+
+        const response = await fetch('/add_news', {  //add news to the database or if there are already 4 news, it will replace the first one
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                headline,
+                newsLink,
+                photoLink
+            })
+        });
+
+        const data = await response.json();
+        console.log(data);
+    }
+
+
+    async function fetchNews() {  //gets all news and displays them
+        const response = await fetch('/news');
+        for (const news of await response.json()) {
+            const newselement = 
+            `<div class="news-item">
+                <a onclick="delete_news('${news.url}')">
+                  <div class="news-image" style="background-image: url(${news.photo});">
+                    <div class="news-overlay">
+                      <p>${news.headline}</p>
+                    </div>
+                  </div>
+                </a>
+              </div> `
+            document.getElementById('news_block').innerHTML += newselement;
+        }
+    }
+    
+    fetchNews();
+
+    function delete_news(url){   //delete news by url, when we click on the news
+        fetch(`/delete_news?url=${encodeURIComponent(url)}`, {
+            method: 'DELETE'
+        }).then(response => response.json())
+          .then(data => {
+              console.log(data);
+              fetchNews();
+          })
+          .catch(error => console.error('Error:', error));
+    
+    }
+
+</script>
+</html>

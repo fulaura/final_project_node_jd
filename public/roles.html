@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Document</title>
+</head>
+<body>
+    <!-- role changer page(for only admin) -->
+    <div class="nav">
+        <nav class="navbar is-black">
+            <div class="navbar-brand">
+              <p style="font-size: 1.8rem; padding-left: 12%; padding-top: 6%;"><strong>Prof!l<</strong></p>
+              <div class="navbar-burger js-burger" data-target="navbarExampleTransparentExample">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          
+            <div id="navbarExampleTransparentExample" class="navbar-menu" style="padding-left: 1%; padding-top: 0.1%;">
+              <div class="navbar-start">
+                <a class="navbar-item" href="/"> Home </a>
+                <a class="navbar-item" onclick="window.location.href='/news_edit'"> News </a>
+                <a class="navbar-item" onclick="window.location.href=`/roles_edit`"> Roles </a>
+                <a class="navbar-item" onclick="window.location.href='/profile_edit'"> Profiles </a>
+              </div>
+            </div>
+          </nav>
+
+
+          <br><br>
+
+
+          <div class="container">
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Username</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control is-expanded">
+                            <input class="input" type="text" id="username" placeholder="Enter username" style="width: 40%;">
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                    <label class="label">Role</label>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control is-expanded">
+                            <input class="input" type="text" id="role" placeholder="Enter role" style="width: 40%;">
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field is-horizontal">
+                <div class="field-label">
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <p class="control">
+                            <button class="button is-primary" onclick="changeRole()">Change Role</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container">
+          <div id="user_list">
+            
+          </div>
+        </div>
+        
+
+        <script>
+            async function changeRole() {  //changes roles according to given values
+                const username = document.getElementById('username').value;
+                const role = document.getElementById('role').value;
+                
+                const response = await fetch('/change_role', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, role })
+                });
+
+                if (response.ok) {
+                    alert('Role updated successfully');
+                    fetchRoles();
+                } else {
+                    alert('Failed to update role');
+                }
+            }
+        </script>
+</body>
+<script>
+    async function fetchRoles() {  //retrieve all roles and display them
+        const response = await fetch('/account_roles');
+        const data = await response.json();
+        console.log(data);
+        
+        document.getElementById('user_list').innerHTML = `
+        ${data.map(user => `
+        <div class="user">
+            <p>Name: ${user.username}</p>
+            <p>Role: ${user.role}</p>
+        </div>
+        <br>
+        `).join('')}
+        `;}
+    fetchRoles();
+</script>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Document</title>
+</head>
+<body>
+    <center>
+            <div class="main_bl" style="width: 40%;">
+        <br>
+        <h1 style="font-size: 1.8rem; text-align: center; margin-top: 20%;">Verify by completing 2FA authentification</h1>
+        <br>
+        <div class="flex_box">
+            <div class="button redirect_if" id="connect-wallet-btn" onclick="connectWallet()">Connect your Wallet</div>
+            <div class="button" onclick="window.location.href='/'">Cancel</div>
+        </div>
+        <p id="wllt_addr">Your wallet-address</p>
+        </div>
+    </center>
+
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<script src="./wallet.js"></script>
+<script>
+    async function connectWallet() {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        //console.log('walletAddress', window.walletAddress);
+        const response = await fetch('/walletVerify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ walletAddress: window.walletAddress })
+        })
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('verified', true);
+            console.log('Login successful');
+        } else {
+            //alert('Invalid wallet address');
+        }
+    }
+</script>
+</html>
